@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Code Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            margin: 20px;
+        }
+        select {
+            padding: 5px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #response {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Country Code Lookup</h1>
+    <form id="countryForm">
+        <label for="countrySelect">Select a country:</label>
+        <select id="countrySelect">
+            {% for country_name in country_names %}
+                <option value="{{ country_name }}">{{ country_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+    <div id="response">
+        <!-- Country data will be displayed here -->
+    </div>
+
+    <script>
+        document.getElementById('countryForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const countryName = document.getElementById('countrySelect').value;
+
+            // Send request to server
+            fetch(`/get_country_code?country_name=${encodeURIComponent(countryName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Display country data
+                    const responseDiv = document.getElementById('response');
+                    responseDiv.innerHTML = `
+                        <h2>Country Data</h2>
+                        <p><strong>Country Name:</strong> ${data.country_name}</p>
+                        <p><strong>Currency Name:</strong> ${data.currency_name}</p>
+                        <p><strong>Currency Code:</strong> ${data.currency_code}</p>
+                    `;
+                })
+                .catch(error => console.error('Error fetching country code:', error));
+        });
+    </script>
+</body>
+</html>
